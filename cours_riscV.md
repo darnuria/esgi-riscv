@@ -91,7 +91,11 @@ Certains registres ont un usage particulier tel que: `ra`, `sp`, `gp` `tp` on ne
 On vera que certains doivent être sauvegardé si besoin lors des appels de fonctions par la fonction qui appelle une autre,
 et la fonction qui est appellée.
 
+
+
 ### Instructions
+
+
 
 #### Instruction arithmetique et logique
 
@@ -99,5 +103,17 @@ et la fonction qui est appellée.
 
 #### Instruction de Branchements
 
+#### Appel systèmes
+
 #### Formatage binaire des instructions
 
+En RiscV les instructions sont divisé en 6 formats:
+
+- Format R: Instructions de manipulation registre à registre ex: `add, sub, sll, slt, sltu, xor`
+- Format I: Instructions avec un immédiat 11 bit ex: `lw, lh, lb, jalr`
+- Format S: Instructions d'écriture mémoire ex: `sw, sh, sb`
+- Format SB: Instructions de branchement relatifs ex: `beq, bne, bge, blt, bltu, bgeu`
+- Format U: Instruction avec le haut d'un immédiats sur `[31:12]` ex: `aiupc, lui`
+- Format UJ: Instructions de branchement sur un registre ex: `jal`
+
+_Référence_: Si vous voulez en savoir plus je vous recommande le chapitre 7 du cours "[cs61c](https://inst.eecs.berkeley.edu/~cs61c/resources/su18_lec/Lecture7.pdf)" de l'université Berkley par Steven Ho ~45 min de lecture à tête reposée.
