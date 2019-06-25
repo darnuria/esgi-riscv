@@ -91,11 +91,27 @@ Certains registres ont un usage particulier tel que: `ra`, `sp`, `gp` `tp` on ne
 On vera que certains doivent être sauvegardé si besoin lors des appels de fonctions par la fonction qui appelle une autre,
 et la fonction qui est appellée.
 
-
-
 ### Instructions
 
+<!-- Schema? -->
+Comme nous l'avons vu en RiscV on utilise des instructions pour manipuler les registres et la mémoire,
+ces sont représenté sous la formes de valeurs binaires sur par exemple 32 bit.
 
+C'est le concept du programme stocké ou "[stored program concept](https://en.wikipedia.org/wiki/Stored-program_computer)",
+cette suite de valeur binaire qui forme un programme est stocké dans la mémoire.
+
+Note: C'est une simplification pour aller plus loin je vous recommande de lire sur la [mémoire virtuelle](https://en.wikipedia.org/wiki/Virtual_memory), je vous recommande le livre "[Operating System : Principles and Practice](http://ospp.cs.washington.edu/index.html)"
+Thomas Anderson and Michael Dahlin.
+
+Il existe des instructions pour faire différentes opérations nous allons en voir une partie ensemble
+
+Certaines des instructions que nous avons manipulées tel que `mv` qui copie un registre dans un autre et `li` qui charge
+un immédiat sont des pseudo instructions, c'est à dire quelles ne sont pas réalisé par le hardware,
+elles ont vocations à être décomposé en instructions plus élèmentaires.
+
+Par exemple  `mv t1, t0` est décomposé en un `add t1, zero, t0`.
+
+On vera dans la partie [Formatage binaire des instructions]() pourquoi mv et li ne sont pas réalisé par notre jeu d'instruction.
 
 #### Instruction arithmetique et logique
 
