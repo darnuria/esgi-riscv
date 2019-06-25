@@ -37,6 +37,7 @@ a += 10;
 Il pourrait compiler en:
 
 ```assembly
+mon_code:
 #         / 32 est un immédiat
 li   t0, 32     # Ce programme charge 32 dans le registre t0
 #      \ t0 est un registre
@@ -57,6 +58,7 @@ Dans le programme çi dessus vois des élèments typiques d'un assembleur:
 - Des **instructions**: `li` et `add`
 - Des **immédiats**: `32` et `10` ce sont des entiers directement encodé dans l'instruction finale
 - Un **registre**: `t0`, manipulé en lecture et écriture.
+- Des **labels**: `mon_code` qui permettent de nommer une adresse dans le programme ici `mon_code` pointe sur notre `li`.
 
 Il existe d'autres instructions pour manipuler la mémoire et faire des branchements conditionnels
 que nous verrons plus tard.
@@ -66,6 +68,9 @@ que nous verrons plus tard.
 Dans le cas du jeu d'instructions RiscV, on manipule explicitement des petites unités de mémoire
 disposées dans le processeur nommées des **registres**, il y en a 32 accessible à l'aide du langage
 d'assemblage.
+
+> _Note_: Ces unité ont pour double but de contourner la «hierarchie des temps d'accès à la mémoire» et aussi
+> de facilité la réalisation hardware du processeur.
 
 | Numéro | Nom | Description | Sauvegarde |
 |:-------|:---:|:-----------:|:----------:|
@@ -106,16 +111,79 @@ Thomas Anderson and Michael Dahlin.
 Il existe des instructions pour faire différentes opérations nous allons en voir une partie ensemble
 
 Certaines des instructions que nous avons manipulées tel que `mv` qui copie un registre dans un autre et `li` qui charge
-un immédiat sont des pseudo instructions, c'est à dire quelles ne sont pas réalisé par le hardware,
+un immédiat, ou `la` qui chage une adresse sont des pseudo instructions, c'est à dire quelles ne sont pas réalisé par le hardware,
 elles ont vocations à être décomposé en instructions plus élèmentaires.
 
 Par exemple  `mv t1, t0` est décomposé en un `add t1, zero, t0`.
 
-On vera dans la partie [Formatage binaire des instructions]() pourquoi mv et li ne sont pas réalisé par notre jeu d'instruction.
+On vera dans la partie [Formatage binaire des instructions](#formatage-binaire-des-instructions) pourquoi `mv` et `li` ne sont pas réalisé par notre jeu d'instruction.
 
 #### Instruction arithmetique et logique
 
 #### Instructions Memoire
+
+Pour faire un programme sur une machine de turing tel que notre processeur, il nous faut une mémoire,
+nos registres sont une forme de mémoire mais c'est assez limitant 32 mots de 32bits.
+
+Notre processeur à donc besoin d'instructions pour manipuler la mémoire de notre ordinateur. C'est le but des instructions
+de stockage (store) et de chargement (load) mémoire.
+
+_Note_: En riscV la mémoire est toujours allignée sur un multiple de 4 et on ne peut pas accèder sur autre chose que un multiple de 4.
+
+En RiscV ce sont les instructions suivantes
+
+> la registre_destination, label
+
+Pseudo instruction permetant de charger l'adresse d'un label dans un registre.
+
+Elle se décompose par l'instruction `aiupc` et souvent un `add`, l'idée est de construire une adresse relative au pointeur
+de code `pc`, c'est pour des questions de praticité dans la réalisation du hardware et des compilateurs.
+
+##### Load instructions
+
+> lw registre_destination, offset(registre_source)
+
+Cette instruction charge dans un registre de destination le contenu dans la mémoire à
+l'adresse contenue dans le registre source un offset peut être additionné à l'addresse dans le registre source.
+
+Équivalent en C:
+```c
+int a[1] = { 42 }; // On reserve un array de 1 mot de 32bits.
+int b = *a[0];     // On récupére la valeur de l'entier
+```
+
+```asm
+.data
+myInt: .word 42 # On réserve un mot de 32 bits pour stocker un entier.
+
+.text
+la t0, myInt # On charge dans t0 l'adresse de myInt.
+lw t1, 0(t0) # On charge la valeur pointé par t0 dans t1.
+```
+
+Pour incrémenter un sur un tableau de mots de 32bits on avance de 4 en 4.
+
+> lh registre_destination, offset(registre_source)
+
+Comme `lw` mais on charge et adresse des demis mots de 32 bits donc 16 bits.
+
+Pour incrémenter sur un tableau de mot de 16bits on avance de 2 en 2.
+
+> lb registre_destination, offset(registre_source)
+
+Comme `lw` mais on charge et adresse des quart de mots de 32 bits donc 8bits,
+c'est très utilisé pour manipuler des chaines de charactères Ascii.
+
+Note: Pour l'incrémentation sur un tableau de mots de 8bits (char) on avance de 1 en 1.
+
+
+##### Store instructions
+
+> sw lb registre_destination, offset(registre_source)
+
+> sh lb registre_destination, offset(registre_source)
+
+> sb lb registre_destination, offset(registre_source)
 
 #### Instruction de Branchements
 
