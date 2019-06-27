@@ -4,39 +4,43 @@ Dans ce cours nous allons découvrir les bases de l'architecture des ordinateurs
 c'est à dire comment dans un ordinateur les différents composants oppérent leurs
 calcul pour remplir des fonctions données.
 
-Par exemple comment le processeur, traite des instructions et émet des rêquêtes à la mémoire.
+Par exemple comment le processeur, charge des données de la mémoire, les traites à l'aide d'instructions et les écrit dans ma mémoire.
 
-Nous vérrons en ouverture la mémoire virtuelle et les entrées sorties très succinctement.
+> _Note :_ Nous verrons plus tard que nos ordinateurs modernes
+exploitent le concent du programme «stocké» en mémoire. Le programme peut donc être
+vue comme une donnée en mémoire.
+
+Nous vérrons en ouverture la mémoire virtuelle et les entrées, sorties avec les périphériques très succinctement.
 
 ## Contexte
 
 ## Architecture RiscV
 
-Risc-V est une architecture d'ordinateur dite [_Reduced Instruction Set Computer (RISC)_](https://fr.wikipedia.org/wiki/RISC-V),
+Risc-V est une architecture d'ordinateur à jeu d'instruction _ISA Instruction Set Architecture_ dite [_Reduced Instruction Set Computer (RISC)_](https://fr.wikipedia.org/wiki/RISC-V),
 c'est à dire à un processeur avec un jeu d'instruction réduit et régulier.
 
 A titre d'exemple l'architecture externe des processeurs [Intel x86_64](https://en.wikipedia.org/wiki/X86-64) est de type
 [_Complex Instruction Set Computer (CISC)_](https://en.wikipedia.org/wiki/Complex_instruction_set_computer).
 
+> Note: C'est en dehors du cadre du cours mais dans la réalisation *interne* du processeur x86_64 on s'arrange pour obtenir un jeu interne RISC car c'est plus facile à optimiser et maintenir.
+
 ### Vue d'ensemble
 
-Un assembleur *(Ou langage d'assemblage)* est un langage permettant de
+Un assembleur ou *langage d'assemblage* est un langage permettant de
 directement utiliser les capacité de calcul d'un processeur.
-La représentation textuelle, dois être traité par un programme nommée «assembleur» chargée de
+La représentation textuelle, dois être traité par un programme nommée «[assembleur](https://fr.wikipedia.org/wiki/Programme_assembleur)» chargée de
 transformer notre assembleur en code **machine** binaire qui sera lui executable par notre processeur.
 
-Pour commencé directement avec du code voici un exemple de code:
-
-Imaginons le code C suivant:
+Pour commencé directement avec du code voici un exemple de code C :
 
 ```c
 int a = 32;
 a += 10;
 ```
 
-Il pourrait compiler en:
+Il pourrait compiler en :
 
-```assembly
+```mips
 mon_code:
 #         / 32 est un immédiat
 li   t0, 32     # Ce programme charge 32 dans le registre t0
@@ -44,33 +48,24 @@ li   t0, 32     # Ce programme charge 32 dans le registre t0
 addi t0, t0, 10 # Puis additionne 10 à ce registre.
 ```
 
-Et en binaire et la correspondance en hexadecimal cela donne:
-
-| Format | 31-28| 27-24| 23-20| 19-16| 15-12| 11-8 | 7-4 | 3-0 |
-|:-------|:----:|:----:|:----:|:----:|:----:|:----:|:---:|:---:|
-| Hex    | 0    | 2    | 0    | 0    | 0    | 2    | 9   | 3   |
-| Bin    | 0000 | 0010 | 0000 | 0000 | 0000 | 0010 | 1001| 0011|
-| Hex    | 0    | 0    | a    | 2    | 8    | 2    | 9   | 3   |
-| Bin    | 0000 | 0000 | 1010 | 0010 | 1000 | 0010 | 1001| 0011|
-
 Dans le programme çi dessus vois des élèments typiques d'un assembleur:
 
-- Des **instructions**: `li` et `add`
-- Des **immédiats**: `32` et `10` ce sont des entiers directement encodé dans l'instruction finale
-- Un **registre**: `t0`, manipulé en lecture et écriture.
-- Des **labels**: `mon_code` qui permettent de nommer une adresse dans le programme ici `mon_code` pointe sur notre `li`.
+- Des **instructions** : `li` et `add`
+- Des **immédiats** : `32` et `10` ce sont des entiers directement encodé dans l'instruction finale
+- Un **registre** : `t0`, manipulé en lecture et écriture.
+- Un **labels** : `mon_code` qui permettent de nommer une adresse dans le programme ici il pointe sur notre `li`.
 
-Il existe d'autres instructions pour manipuler la mémoire et faire des branchements conditionnels
-que nous verrons plus tard.
+Il existe d'autres instructions pour manipuler la mémoire et faire des branchements
+conditionnels que nous verrons plus tard.
 
 #### Registres
 
-Dans le cas du jeu d'instructions RiscV, on manipule explicitement des petites unités de mémoire
-disposées dans le processeur nommées des **registres**, il y en a 32 accessible à l'aide du langage
-d'assemblage.
+En assembleur RiscV, on manipule explicitement des petites unités de mémoire
+disposées dans le processeur nommées des **registres**, il y en a 32 accessible
+dans le jeu d'instruction de base.
 
-> _Note_: Ces unité ont pour double but de contourner la «hierarchie des temps d'accès à la mémoire» et aussi
-> de facilité la réalisation hardware du processeur.
+> _Note_: Les registres ont pour double but de contourner la «hierarchie des temps d'accès à la mémoire»
+> et aussi de facilité la réalisation hardware du processeur.
 
 | Numéro | Nom | Description | Sauvegarde |
 |:-------|:---:|:-----------:|:----------:|
@@ -96,11 +91,33 @@ Certains registres ont un usage particulier tel que: `ra`, `sp`, `gp` `tp` on ne
 On vera que certains doivent être sauvegardé si besoin lors des appels de fonctions par la fonction qui appelle une autre,
 et la fonction qui est appellée.
 
+> _Aller Plus loin_: D'autres jeux de registres sont accessible dans des extentions
+> du jeu d'instructions RiscV notament pour les calcul en virgule flottante ou bien
+> le jeu priviliégié utile quand ont réalise un OS ou programme pour des
+> micro-controleur.
+
 ### Instructions
 
 <!-- Schema? -->
 Comme nous l'avons vu en RiscV on utilise des instructions pour manipuler les registres et la mémoire,
 ces sont représenté sous la formes de valeurs binaires sur par exemple 32 bit.
+
+Pour rappel le programme de tout à l'heure:
+
+```mips
+li   t0, 32     # Ce programme charge 32 dans le registre t0
+addi t0, t0, 10 # Puis additionne 10 à ce registre.
+```
+
+Et en binaire et la correspondance en hexadecimal nous donne,
+les intervals représentent les bits de 4 en 4:
+
+| Format | 31-28| 27-24| 23-20| 19-16| 15-12| 11-8 | 7-4 | 3-0 |
+|:-------|:----:|:----:|:----:|:----:|:----:|:----:|:---:|:---:|
+| Hex    | 0    | 2    | 0    | 0    | 0    | 2    | 9   | 3   |
+| Bin    | 0000 | 0010 | 0000 | 0000 | 0000 | 0010 | 1001| 0011|
+| Hex    | 0    | 0    | a    | 2    | 8    | 2    | 9   | 3   |
+| Bin    | 0000 | 0000 | 1010 | 0010 | 1000 | 0010 | 1001| 0011|
 
 C'est le concept du programme stocké ou "[stored program concept](https://en.wikipedia.org/wiki/Stored-program_computer)",
 cette suite de valeur binaire qui forme un programme est stocké dans la mémoire.
@@ -139,17 +156,23 @@ Pseudo instruction permetant de charger l'adresse d'un label dans un registre.
 Elle se décompose par l'instruction `aiupc` et souvent un `add`, l'idée est de construire une adresse relative au pointeur
 de code `pc`, c'est pour des questions de praticité dans la réalisation du hardware et des compilateurs.
 
+Exemple:
+```mips
+la t0, my_address # t0 contiendra l'addresse pointé par my_address
+```
+
 ##### Load instructions
 
 > lw registre_destination, offset(registre_source)
 
-Cette instruction charge dans un registre de destination le contenu dans la mémoire à
-l'adresse contenue dans le registre source un offset peut être additionné à l'addresse dans le registre source.
+Cette instruction charge dans un registre de destination le contenu dans la mémoire
+à l'adresse contenue dans le registre source un offset peut être additionné à l'addresse dans le registre source.
 
 Équivalent en C:
 ```c
-int a[1] = { 42 }; // On reserve un array de 1 mot de 32bits.
-int b = *a[0];     // On récupére la valeur de l'entier
+int a[2] = { 42, 1 }; // On reserve un array de 1 mot de 32bits.
+int b = a[0];         // On récupére 42
+int c = c[1];         // On récupére 1
 ```
 
 ```asm
@@ -158,7 +181,8 @@ myInt: .word 42 # On réserve un mot de 32 bits pour stocker un entier.
 
 .text
 la t0, myInt # On charge dans t0 l'adresse de myInt.
-lw t1, 0(t0) # On charge la valeur pointé par t0 dans t1.
+lw t1, 0(t0) # On charge la valeur pointé par t0 dans t1 donc 42.
+lw t2, 4(t0) # On récupère ici 1.
 ```
 
 Pour incrémenter un sur un tableau de mots de 32bits on avance de 4 en 4.
@@ -173,6 +197,26 @@ Pour incrémenter sur un tableau de mot de 16bits on avance de 2 en 2.
 
 Comme `lw` mais on charge et adresse des quart de mots de 32 bits donc 8bits,
 c'est très utilisé pour manipuler des chaines de charactères Ascii.
+
+Pour être concrêt voici un C :
+
+```c
+char a = "chat"; // On déclare une chaine de charactère.
+char c = a[0];   // on récupére le c.
+char b = a[2]    // on récupére le a.
+```
+
+Il peut lieu à un schema de compilation comme celui la:
+
+```mips
+.data
+a: .string "chat"
+
+.text
+la t0, a
+lb t1, 0(a) # c
+lb t2, 2(a) # a
+```
 
 Note: Pour l'incrémentation sur un tableau de mots de 8bits (char) on avance de 1 en 1.
 
