@@ -24,6 +24,8 @@ A titre d'exemple l'architecture externe des processeurs [Intel x86_64](https://
 
 > Note: C'est en dehors du cadre du cours mais dans la réalisation *interne* du processeur x86_64 on s'arrange pour obtenir un jeu interne RISC car c'est plus facile à optimiser et maintenir.
 
+<!-- Parler plus de RiscV en général ou faire une ouverture sur le Hennessi et Patterson -->
+
 ### Vue d'ensemble
 
 Un assembleur ou *langage d'assemblage* est un langage permettant de
@@ -83,8 +85,8 @@ dans le jeu d'instruction de base.
 | x18-x27 | s2-s11 | Registre sauvegarder    | Appellé   |
 | x28-x31 | t3-t6  | Vaut toujours 0         | Appellant |
 
-Le tableau çi-dessus est inspiré par la [page wikipédia riscV](https://en.wikipedia.org/wiki/RISC-V)
-et le chapitre 18 sur les [conventions d'appel](https://riscv.org/wp-content/uploads/2015/01/riscv-calling.pdf)
+Le tableau ci-dessus est inspiré par la [page wikipédia riscV](https://en.wikipedia.org/wiki/RISC-V)
+et le chapitre 18 sur les [conventions d'appel](https://riscv.org/wp-content/uploads/2015/01/riscv-calling.pdf) de la spécification du jeu d'instruction.
 
 Certains registres ont un usage particulier tel que: `ra`, `sp`, `gp` `tp` on ne les utilisera pas dans la majorité des cas directement. le registre `zero` à toujours la valeur 0.
 
@@ -99,8 +101,7 @@ et la fonction qui est appellée.
 ### Instructions
 
 <!-- Schema? -->
-Comme nous l'avons vu en RiscV on utilise des instructions pour manipuler les registres et la mémoire,
-ces sont représenté sous la formes de valeurs binaires sur par exemple 32 bit.
+Comme nous l'avons vu en RiscV on utilise des instructions pour manipuler les registres et la mémoire, les instructions sont représenté sous la formes de valeurs binaires sur par exemple 32 bit.
 
 Pour rappel le programme de tout à l'heure:
 
@@ -122,8 +123,10 @@ les intervals représentent les bits de 4 en 4:
 C'est le concept du programme stocké ou "[stored program concept](https://en.wikipedia.org/wiki/Stored-program_computer)",
 cette suite de valeur binaire qui forme un programme est stocké dans la mémoire.
 
-Note: C'est une simplification pour aller plus loin je vous recommande de lire sur la [mémoire virtuelle](https://en.wikipedia.org/wiki/Virtual_memory), je vous recommande le livre "[Operating System : Principles and Practice](http://ospp.cs.washington.edu/index.html)"
-Thomas Anderson and Michael Dahlin.
+> _Note :_ C'est une simplification pour aller plus loin je vous recommande de lire sur
+> la [mémoire virtuelle](https://en.wikipedia.org/wiki/Virtual_memory), je vous
+> recommande le livre "[Operating System : Principles and Practice](http://ospp.cs.washington.edu/index.html)"
+>Thomas Anderson and Michael Dahlin.
 
 Il existe des instructions pour faire différentes opérations nous allons en voir une partie ensemble
 
@@ -135,6 +138,33 @@ Par exemple  `mv t1, t0` est décomposé en un `add t1, zero, t0`.
 
 On vera dans la partie [Formatage binaire des instructions](#formatage-binaire-des-instructions) pourquoi `mv` et `li` ne sont pas réalisé par notre jeu d'instruction.
 
+#### Mémoire
+
+Comme vu l'avez peut-être vu en C on représente la mémoire comme un espace, allant
+de l'addresse `0x0000_0000` jusque à l'adresse `0xFFFF_FFFF` pour un programme 32bits.
+
+##### Segments
+
+Dans nos programmes on décompose cet espace en segments par exemple pour le code
+est le segment: `.text` pour les données du programme connues avant l'éxecution c'est le segment `.data`.
+
+> _Aller plus loin :_ Il existe d'autres segments tel que `.bss` beaucoup sont liée
+> au système d'instruction plus que au jeu d'instruction.
+
+Par exemple la pile est un segment particulier, qu'on utilise pour stocker des variables locales et conserver la valeurs des registre entre les appels de fonctions ou appel au système d'exploitation.
+
+##### Usage dans l'assembleur
+
+<!-- todo Schemas -->
+
+Dans nos programmes assembleurs on manipulera des addresses souvent. Les labels nous servirons à marquer une adresse particulière pour sauter dessus ou pour
+charger un tableau du segment `.data`. Ou alors on utilisera le registre, `sp`
+qui marque le sommet de la pile pour sauvegarder la valeur de nos registres.
+Le registre `gp` ou `ra` sont utilisé calculer des jumps relatifs dans le
+programme. Attention le registre `pc` est pas accesible directement à nos programmes.
+
+<!-- ##### Mémoire virtuelle -->
+
 #### Instruction arithmetique et logique
 
 #### Instructions Memoire
@@ -142,18 +172,20 @@ On vera dans la partie [Formatage binaire des instructions](#formatage-binaire-d
 Pour faire un programme sur une machine de turing tel que notre processeur, il nous faut une mémoire,
 nos registres sont une forme de mémoire mais c'est assez limitant 32 mots de 32bits.
 
-Notre processeur à donc besoin d'instructions pour manipuler la mémoire de notre ordinateur. C'est le but des instructions
-de stockage (store) et de chargement (load) mémoire.
+Notre processeur à donc besoin d'instructions pour manipuler la mémoire de notre
+ordinateur. C'est le but des instructions de stockage (store) et de chargement
+(load) mémoire.
 
-_Note_: En riscV la mémoire est toujours allignée sur un multiple de 4 et on ne peut pas accèder sur autre chose que un multiple de 4.
+>_Note :_ En riscV la mémoire est toujours allignée sur un multiple de 4 et on ne
+> peut pas accèder sur autre chose que un multiple de 4.
 
-En RiscV ce sont les instructions suivantes
+##### Charger une adresse dans un registre
 
 > la registre_destination, label
 
 Pseudo instruction permetant de charger l'adresse d'un label dans un registre.
 
-Elle se décompose par l'instruction `aiupc` et souvent un `add`, l'idée est de construire une adresse relative au pointeur
+Elle se décompose en l'instruction `aiupc` et souvent un `add`, l'idée est de construire une adresse relative au pointeur
 de code `pc`, c'est pour des questions de praticité dans la réalisation du hardware et des compilateurs.
 
 Exemple:
@@ -201,25 +233,24 @@ c'est très utilisé pour manipuler des chaines de charactères Ascii.
 Pour être concrêt voici un C :
 
 ```c
-char a = "chat"; // On déclare une chaine de charactère.
-char c = a[0];   // on récupére le c.
-char b = a[2]    // on récupére le a.
+char s = "chat"; // On déclare une chaine de charactère.
+char c = s[0];   // on récupére le c.
+char b = s[2]    // on récupére le a.
 ```
 
 Il peut lieu à un schema de compilation comme celui la:
 
 ```mips
 .data
-a: .string "chat"
+s: .string "chat"
 
 .text
-la t0, a
-lb t1, 0(a) # c
-lb t2, 2(a) # a
+la t0, s     # t0 contient l'addresse de base de notre chaine!
+lb t1, 0(t0) # t1 contient 'c'
+lb t2, 2(t0) # t2 contient 'a'
 ```
 
 Note: Pour l'incrémentation sur un tableau de mots de 8bits (char) on avance de 1 en 1.
-
 
 ##### Store instructions
 
@@ -232,6 +263,29 @@ Note: Pour l'incrémentation sur un tableau de mots de 8bits (char) on avance de
 #### Instruction de Branchements
 
 #### Appel systèmes
+
+Un appel système ou syscall est une sorte de fonction spéciale que propose le système d'exploitation, cet appel s'executera en suspendant l'execution du programme courant.
+
+Pour les appeller on utilise l'instruction :
+
+> ecall
+
+`ecall` est l'instruction qui permet de déclancher une *exception*, qui force le
+processeur à interrompre ce qu'il fesait pour sauter dans le code de gestion
+des exceptions du noyau de notre système d'exploitation.
+
+Pour passer des arguments aux appels systèmes _syscalls_, on les passe par les registres `a0`, `a1`, `a2` à `a3`, on charge dans le registre `a7` le numero qui renseigne l'appel système désiré et ensuite on utilise `ecall`.
+
+Exemple:
+```mips
+    li  a7, 1 # le syscall 1 permet d'afficher un entier
+    li a0, 42
+    ecall     # On peut lire 42 dans la console de Rars.
+```
+
+> _Note :_ Dans nos programmes C, JavaScript etc. bien souvent on passera par l'abstraction de la libC pour faire appel aux services du noyau au lieu de directement faire des `ecall`.
+
+> _Note :_ Cette _convention d'appel avec le noyau_ dépends de l'OS !
 
 #### Formatage binaire des instructions
 
