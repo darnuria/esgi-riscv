@@ -256,9 +256,32 @@ Note: Pour l'incrémentation sur un tableau de mots de 8bits (char) on avance de
 
 > sw lb registre_destination, offset(registre_source)
 
+Permet de d'écrire dans la mémoire un mot de 32 bit contenu dans votre registre de destination
+à l'adresse contenue dans le registre source plus un offset.
+
+La mémoire est adressable de de 4 en 4.
+
+Exemple de code pour stocker un mot
+```mips
+.data
+myInt .word 0
+
+.text
+la t1, myInt # t1    <- myInt
+li t0, 42    # t0    <- 42
+sw t0, 0(t1)    # M[t1] <- t0
+```
+
 > sh lb registre_destination, offset(registre_source)
 
+Écrire un 16 bits un demi-mot dans la mémoire c'est utile pour gérer du hardware.
+La mémoire est addressable de 2 en 2.
+
 > sb lb registre_destination, offset(registre_source)
+
+Cette instruction permet d'écrire un byte 8bits dans la mémoire c'est utile pour gérer des caractères ou du hardware.
+
+la mémoire est adressable de 1 en 1.
 
 #### Instruction de Branchements
 
@@ -319,7 +342,7 @@ Sujets:
 - Swapp 2 à 2 des élèments d'un tableau
     objectif : découverte des écriture mémoires [1,2,3,4] deviendrais [2,1,4,3]
 
-<!-- - Ecrire un compresseur RLE
+<!-- - Ecrire un compresseur [RLE](https://fr.wikipedia.org/wiki/RLE)
     objectif : accès mémoire, registre
     -->
 
