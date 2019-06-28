@@ -299,3 +299,29 @@ En RiscV les instructions sont divisées en 6 formats:
 - Format UJ: Instructions de branchement sur un registre ex: `jal`
 
 _Référence_: Si vous voulez en savoir plus je vous recommande le chapitre 7 du cours "[cs61c](https://inst.eecs.berkeley.edu/~cs61c/resources/su18_lec/Lecture7.pdf)" de l'université Berkley par Steven Ho ~45 min de lecture à tête reposée.
+
+## Exercices
+
+Sujets:
+
+- Rechercher un entier passé en paramètre dans un tableau de entier.
+    objectif : cionvention d'appel, comparaison, accès mémoire
+
+- Incrémenter un tableau par un entier N.
+    objectif : opération, accès mémoire
+
+- Trouver le maximum d'un tableau de nombre.
+    objectif : comparaison, accès mémoire
+
+- Jouer une mélodie avec des appels système
+    objectif : appel système, accès mémoire
+
+- Swapp 2 à 2 des élèments d'un tableau
+    objectif : découverte des écriture mémoires [1,2,3,4] deviendrais [2,1,4,3]
+
+<!-- - Ecrire un compresseur RLE
+    objectif : accès mémoire, registre
+    -->
+
+- Faire un chiffrement simple par décalage
+    objectif : utilisation des décalage de bits
