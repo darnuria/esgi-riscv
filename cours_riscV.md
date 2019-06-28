@@ -269,7 +269,7 @@ myInt .word 0
 .text
 la t1, myInt # t1    <- myInt
 li t0, 42    # t0    <- 42
-sw t0, 0(t1)    # M[t1] <- t0
+sw t0, 0(t1) # M[t1] <- t0
 ```
 
 > sh lb registre_destination, offset(registre_source)
