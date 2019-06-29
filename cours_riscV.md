@@ -1,14 +1,14 @@
-# Introduction à d'architecture des ordinateurs et assembleur
+# Introduction à l'architecture des ordinateurs et assembleur
 
 Dans ce cours nous allons découvrir les bases de l'architecture des ordinateurs,
 c’est-à-dire comment dans un ordinateur les différents composants opèrent leurs
 calcul pour remplir des fonctions données.
 
-Par exemple comment le processeur, charge des données de la mémoire, les traites à l'aide d'instructions et les écrit dans ma mémoire.
+Par exemple comment le processeur, charge des données de la mémoire, les traite à l'aide d'instructions et les écrit dans ma mémoire.
 
 > _Note :_ Nous verrons plus tard que nos ordinateurs modernes
 Exploitent le concept du programme «stocké» en mémoire. Le programme peut donc être
-vue comme une donnée en mémoire.
+vu comme une donnée en mémoire.
 
 Nous verrons en ouverture la mémoire virtuelle et les entrées, sorties avec les périphériques très succinctement.
 
@@ -30,7 +30,7 @@ A titre d'exemple l'architecture externe des processeurs [Intel x86_64](https://
 
 Un assembleur ou *langage d'assemblage* est un langage permettant de
 directement utiliser les capacités de calcul d'un processeur.
-La représentation textuelle, dois être traité par un programme nommé «[assembleur](https://fr.wikipedia.org/wiki/Programme_assembleur)» chargée de
+La représentation textuelle, doit être traitée par un programme nommé «[assembleur](https://fr.wikipedia.org/wiki/Programme_assembleur)» chargé de
 transformer notre assembleur en code **machine** binaire qui sera lui exécutable par notre processeur.
 
 Pour commencer directement avec du code voici un exemple de code C :
@@ -50,11 +50,11 @@ li   t0, 32     # Ce programme charge 32 dans le registre t0
 addi t0, t0, 10 # Puis additionne 10 à ce registre.
 ```
 
-Dans le programme ci-dessus vois des éléments typiques d'un assembleur:
+Dans le programme ci-dessus on voit des éléments typiques d'un assembleur:
 
 - Des **instructions** : `li` et `add`
 - Des **immédiats** : `32` et `10` ce sont des entiers directement encodés dans l'instruction finale
-- Un **registre** : `t0`, manipulé en lecture et écriture.
+- Un **registre** : `t0`, manipule en lecture et écriture.
 - Un **labels** : `mon_code` qui permettent de nommer une adresse dans le programme ici il pointe sur notre `li`.
 
 Il existe d'autres instructions pour manipuler la mémoire et faire des branchements
