@@ -79,10 +79,10 @@ dans le jeu d'instruction de base.
 | x5      | t0     | Temporaire         | Appelant |
 | x6-x7   | t1-t2  | Temporaire         | Appelant |
 | x8      | s0/fp  | Registre à sauvegarder / ancien sommet de pile | Appelée |
-| x9      | s1     | Registre à sauvegarder | Appellé |
+| x9      | s1     | Registre à sauvegarder | Appellée |
 | x10-x11 | a0-a1  | Arguments de fonction ou valeur de retour | Appellant |
 | x12-x17 | a2-a7  | Arguments de fonctions  | Appellant |
-| x18-x27 | s2-s11 | Registre sauvegarder    | Appellé   |
+| x18-x27 | s2-s11 | Registre sauvegarder    | Appellée   |
 | x28-x31 | t3-t6  | Vaut toujours 0         | Appellant |
 
 Le tableau ci-dessus est inspiré par la [page wikipédia riscV](https://en.wikipedia.org/wiki/RISC-V)
@@ -301,27 +301,123 @@ Pour passer des arguments aux appels systèmes _syscalls_, on les passe par les 
 
 Exemple:
 ```mips
-    li  a7, 1 # le syscall 1 permet d'afficher un entier
-    li a0, 42
-    ecall     # On peut lire 42 dans la console de Rars.
+li  a7, 1 # le syscall 1 permet d'afficher un entier
+li a0, 42
+ecall     # On peut lire 42 dans la console de Rars.
 ```
 
 > _Note :_ Dans nos programmes C, JavaScript, etc. bien souvent on passera par l'abstraction de la libC pour faire appel aux services du noyau au lieu de directement faire des `ecall`.
 
 > _Note :_ Cette _convention d'appel avec le noyau_ dépends de l'OS !
 
+> Aller plus loin: Pourquoi avoir une instruction pour «appeller» le système d'exploitation? Car il s'execute avec des droits étendus
+> sur l'ordinateur et a access à des instructions privilégiées: https://content.riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf
+
 #### Formatage binaire des instructions
 
 En RiscV les instructions sont divisées en 6 formats:
 
-- Format R: Instructions de manipulation registre à registre ex: `add, sub, sll, slt, sltu, xor`
-- Format I: Instructions avec un immédiat 11 bit ex: `lw, lh, lb, jalr`
-- Format S: Instructions d'écriture mémoire ex: `sw, sh, sb`
-- Format SB: Instructions de branchement relatifs ex: `beq, bne, bge, blt, bltu, bgeu`
-- Format U: Instruction avec le haut d'un immédiat sur `[31:12]` ex: `aiupc, lui`
-- Format UJ: Instructions de branchement sur un registre ex: `jal`
+- Format R : Instructions de manipulation registre à registre ex: `add, sub, sll, slt, sltu, xor`
+- Format I : Instructions avec un immédiat 11 bit ex: `lw, lh, lb, jalr`
+- Format S : Instructions d'écriture mémoire ex: `sw, sh, sb`
+- Format SB : Instructions de branchement relatifs ex: `beq, bne, bge, blt, bltu, bgeu`
+- Format U : Instruction avec le haut d'un immédiat sur `[31:12]` ex: `aiupc, lui`
+- Format UJ : Instructions de branchement sur un registre ex: `jal`
 
-_Référence_: Si vous voulez en savoir plus je vous recommande le chapitre 7 du cours "[cs61c](https://inst.eecs.berkeley.edu/~cs61c/resources/su18_lec/Lecture7.pdf)" de l'université Berkley par Steven Ho ~45 min de lecture à tête reposée.
+_Référence_: Si vous voulez en savoir plus je vous recommande le chapitre 7 du cours «[cs61c](https://inst.eecs.berkeley.edu/~cs61c/resources/su18_lec/Lecture7.pdf)» de l'université Berkley par Steven Ho ~45 min de lecture à tête reposée.
+
+### Fonctions et conventions d'appels
+
+En assembleur pour écrire une fonction réutilisable, il faut commencer par définir un label par exemple: `somme`,
+puis de réaliser notre calcul et de mettre le résultat quelque part. Cependant pour que notre code soit « interropérable »
+au sein de notre propre programme assembleur ou utilisable depuis un autre langage il nous faut une convention.
+
+Il se trouve que le standard RISC-V viens avec une convention pareille, cela s'appel une _Application Binary Interface_ (ABI) elle dépends à la fois du système d'exploitation et de nos ISA. Nous avons utilisé l'ABI [riscv-elf-linux](https://github.com/riscv/riscv-elf-psabi-doc/blob/master/riscv-elf.md).
+
+Pour revenir à notre fonction `somme` son code pourrais ressembler de façon optimiser :
+
+```mips
+# a0: Addresse d'itération sur le tableau
+# a1: Taille du tableau
+somme:
+    mv   t2, zero     # sum <- 0
+    beqz a1, end_loop # size == 0?
+
+    slli a1, a1, 2    # size <- (size * 4)
+    mv   t0, a0       # @fin <- @base
+    # Calcul adresse de fin du tableau
+    # @fin <- @base + (size * 4)
+    add  t0, a0, a1 # @Fin <- @base + size
+
+# Notre boucle qui fait la somme.
+loop:
+    lw   t1, 0(a0)    # val <- *iterateur
+    addi a0, a0, 4    # @iterateur + 4
+    add  t2, t2, t1   # somme += val
+    bne  t0, a0, loop # @iterateur == @fin
+
+end_loop:
+    mv   a0, t2  # On copie sum dans le registre de retour
+    jr   ra, 0   # On retourne dans la fonction qui avait appellée somme
+```
+
+Et le code pour appeller `somme` à:
+
+```mips
+array: .word 1, 1, 1
+
+.text
+
+# On charge les paramètres pour appeller somme
+# a0: contiens l'adresse du tableau
+# a1: contiens la somme
+la a0, array
+li a1, 3
+jal somme
+
+# print result of sum contained in a0.
+li a7, 1
+ecall
+
+# call exit pour terminer le programme.
+li a7, 10
+ecall
+```
+
+`somme` ici est une fonction dite terminale, elle n'appelle pas d'autres fonctions donc on à pas besoin de sauvegarder
+le contenu des registres et on à utiliser que des registres temporaires et à sauvegarder par l'appellant dans le corps de `somme`.
+
+Cependant il s'agit d'une optimisation un compilateur C sans aucune optimisation aurait produit un code avec une
+sauvegarde des registres sur la pile.
+
+<!-- TODO: Schema pile -->
+
+<!--
+
+```mips
+somme:
+    # Prologue de la convention d'appel
+    # Somme utilise 3 registres
+    # temporaires non sauvegardé: t0, t1, t2
+    # @retour: ra
+    # On dois donc réserver 3 + 1 * 4 mots dans la pile
+    addi sp, sp, -16 # On reserve 4 emplacements de 32bits dans la pile.
+    sw   ra, 0(sp)   # On sauve l'addresse de retour
+
+    # Le Corps de la fonction reste inchangé
+    # ...
+    # Sur une fonction plus compliqué on pourrais appeller des fonctions dans son corps
+
+    # Epilogue de la convention d'appel
+    lw   ra, sp(0)  # On récupére notre addresse de retour
+    addi sp, sp, 16 # On libère 4 mots de 32 bits dans la pile
+    jal ra
+```
+
+On retrouve bien la convention d'appel qui sauvegarde tout les registres.
+
+On vois ici que les registres sauvegardé sont:
+-->
 
 ## Exercices
 
