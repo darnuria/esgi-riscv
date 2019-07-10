@@ -110,8 +110,8 @@ li   t0, 32     # Ce programme charge 32 dans le registre t0
 addi t0, t0, 10 # Puis additionne 10 à ce registre.
 ```
 
-Et en binaire et la correspondance en hexadécimal nous donne,
-les intervalles représentent les bits de 4 en 4:
+Ce petit programme assembleur une fois en code machine équivaut aux mots de
+32bits,`0x02000293` et `0x00a28293` si on décompose ça donne ça :
 
 | Format | 31-28| 27-24| 23-20| 19-16| 15-12| 11-8 | 7-4 | 3-0 |
 |:-------|:----:|:----:|:----:|:----:|:----:|:----:|:---:|:---:|
@@ -120,10 +120,10 @@ les intervalles représentent les bits de 4 en 4:
 | Hex    | 0    | 0    | a    | 2    | 8    | 2    | 9   | 3   |
 | Bin    | 0000 | 0000 | 1010 | 0010 | 1000 | 0010 | 1001| 0011|
 
-C'est le concept du programme stocké ou "[stored program concept](https://en.wikipedia.org/wiki/Stored-program_computer)",
-cette suite de valeur binaire qui forme un programme est stocké dans la mémoire.
+> Note: C'est le concept du programme stocké ou "[stored program concept](https://en.wikipedia.org/wiki/Stored-program_computer)",
+> cette suite de valeur binaire qui forme un programme est stocké dans la mémoire.
 
-> _Note :_ C'est une simplification pour aller plus loin je vous recommande de lire sur
+> _Aller plus loin :_ C'est une simplification pour aller plus loin je vous recommande de lire sur
 > la [mémoire virtuelle](https://en.wikipedia.org/wiki/Virtual_memory), je vous
 > recommande le livre "[Operating System : Principles and Practice](http://ospp.cs.washington.edu/index.html)"
 >Thomas Anderson and Michael Dahlin.
