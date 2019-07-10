@@ -328,11 +328,28 @@ _Référence_: Si vous voulez en savoir plus je vous recommande le chapitre 7 du
 
 ### Fonctions et conventions d'appels
 
-En assembleur pour écrire une fonction réutilisable, il faut commencer par définir un label par exemple: `somme`,
-puis de réaliser notre calcul et de mettre le résultat quelque part. Cependant pour que notre code soit « interropérable »
-au sein de notre propre programme assembleur ou utilisable depuis un autre langage il nous faut une convention.
+Une fonction c'est juste un ensemble d'instructions «regroupé», pour
+l'utiliser on «saute» à son adresse de début puis on en revient une fois fini. Pour sauter,
+facilement au début de ce bloc, on nomme les entrées d'un suite d'instructions à l'aide de
+label/étiquette.
 
-Il se trouve que le standard RISC-V viens avec une convention pareille, cela s'appel une _Application Binary Interface_ (ABI) elle dépends à la fois du système d'exploitation et de nos ISA. Nous avons utilisé l'ABI [riscv-elf-linux](https://github.com/riscv/riscv-elf-psabi-doc/blob/master/riscv-elf.md).
+Les fonctions peut être écrite par des personnes différentes
+directement en assembleur, ou même résulter des compilations sous format
+de fichier objet `.o` provenant de compilateurs différent.
+
+Il n'est pas possible de seulement définir pour 2 personnes une convention pour communiqué,
+notamment car il n'y pas forcément de relation/communication entre les
+différents programmeur, par exemple dans le cas de librairie de code.
+
+
+Pour résoudre ce problème, une convention stardard, appellé [Aplication Binary Interface](https://en.wikipedia.org/wiki/Application_binary_interface) est défini selon au moins :
+
+- jeux d'instruction
+- format du binaire
+- système d'exploitation
+- des détails hardware par exemple la gestion des flottants.
+
+Nous concrétement en RiscV on utilise l'ABI [riscv-elf-linux](https://github.com/riscv/riscv-elf-psabi-doc/blob/master/riscv-elf.md).
 
 Pour revenir à notre fonction `somme` son code pourrais ressembler de façon optimiser :
 
