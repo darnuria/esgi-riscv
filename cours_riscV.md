@@ -461,3 +461,14 @@ Sujets:
 
 - Faire un chiffrement simple par décalage
     objectif : utilisation des décalage de bits
+
+
+### Références:
+
+- https://en.wikipedia.org/wiki/RISC-V
+- https://rv8.io/asm.html
+- https://rv8.io/isa
+- https://github.com/riscv/riscv-isa-manual
+
+- Cours MIT archi https://www.youtube.com/channel/UC1DcxXg6GkAcp2zk2w7U6qQ/videos
+- https://riscv.org/specifications/
