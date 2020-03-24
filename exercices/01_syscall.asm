@@ -1,5 +1,12 @@
 # Exercice 1
-# utiliser un appel système comme write
+# Utiliser un appel système comme write
+
+# Segements quand utiliser .data/.text?
+# =====================================
+#
+# .data pour les données connues à la compilation genre les chaines ou des tableaux
+# de taille connue.
+# .text pour le code. :)
 
 # On indique qu'on souhaite ranger des données dans le segment de data.
 .data
