@@ -1,8 +1,6 @@
-# Exercice 2
+# Exercice 2 conditions
 # Notions:
 #
-# Pouvoir faire un saut conditionnel dans un programme ici
-# tester l'egalité entre deux registres.
 # Effectuer un branchement conditionnel puis non conditionnel.
 # Puis afficher un message selon le résultat.
 
@@ -12,14 +10,16 @@
 # - `t0` <- 5
 # - `t1` <- 4
 .data
+
 msg_eq: .asciz "Ces nombres sont egaux!"
 msg_neq: .asciz "Ces nombres ne sont pas egaux"
+
 .text
 
 # En rust on aurais surement fait un truc du genre
 # ```rust
-# let a = 5;
-# let b = 4;
+# let a = 4;
+# let b = 5;
 # let msg = if a == b { "Ces nombres sont egaux!" } else { "Ces nombres ne sont pas egaux" };
 # println!(msg);
 # ```
