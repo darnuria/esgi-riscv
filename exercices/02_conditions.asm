@@ -12,8 +12,8 @@
 # - `t0` <- 5
 # - `t1` <- 4
 .data
-msg_eq: .asciiz "Ces nombres sont egaux!"
-msg_neq: .asciiz "Ces nombres ne sont pas egaux"
+msg_eq: .asciz "Ces nombres sont egaux!"
+msg_neq: .asciz "Ces nombres ne sont pas egaux"
 .text
 
 # En rust on aurais surement fait un truc du genre
