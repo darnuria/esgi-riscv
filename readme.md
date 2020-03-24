@@ -207,6 +207,11 @@ On verra dans la partie [Formatage binaire des instructions](#formatage-binaire-
 
 Comme vu l'avez peut-être vu en C on représente la mémoire comme un espace, allant
 de l'adresse `0x0000_0000` jusque à l'adresse `0xFFFF_FFFF` pour un programme 32 bits.
+La mémoire est organisée en lignes de 8 valeurs, contenant des mots de 32 bits, elle est
+addressable de 4 en 4, de 2 en 2 ou byte à byte.
+
+On utilisera courament l'adressage de 4 en 4 dit mot à mot, à part pour les chaines de caractère ou
+il est fait byte à byte. voir instruction `lw`, `lh`, `lb` et `sw`, `sh`, `sb`.
 
 Voici d'ailleurs une vue d'ensemble mémoire et code d'un programme assembleur:
 ![schema vue ensemble mémoire et code et segments](03_asm_memory.jpg).
@@ -220,6 +225,20 @@ est le segment: `.text` pour les données du programme connues avant l'exécutio
 > au système d'instruction plus que au jeu d'instruction.
 
 Par exemple la pile est un segment particulier, qu'on utilise pour stocker des variables locales et conserver la valeur des registres entre les appels de fonctions ou appel au système d'exploitation.
+
+Précisions sur les segments de code pour cette architecture virtuelle:
+
+- Code `.text` `0x0040_0000` code de notre programme en langage machine
+- Stack/pile commence à `0x7fffeffc` allocation dans la pile
+- extern `0x1000_0000` variables globales utile avec `.include` (on utilisera pas)
+- data `0x1001_0000` variables locales à un fichier
+- heap/tas `0x1004_0000` allocations dynamiques
+- Memory Mapped IO `0xffff_0000` interaction IO directement par la mémoire sans support OS
+
+Note sur l'usage de l'inspecteur mémoire de Rars:
+
+Les cases dans l'inspecteur du segment data: 0 à +1C ça correspond au cases `0x1001_0000`; `0x1001_001C` de la mémoire du segment `.data` les adresses s'incrémentent de 4 en 4 donc `0x1001_0000`, `0x1001_0004`, `0x1001_0008`, `0x1001_000C`, `0x1001_00010`, `0x1001_0014`, `0x1001_0018`, `0x1001_001C` et `0x1001_0020` etc.
+
 
 ##### Adresses en l'assembleur
 
