@@ -1,53 +1,95 @@
-# Introduction à l'architecture des ordinateurs et assembleur
+# Introduction à l'assembleur RiscV
 
-Dans ce cours nous allons découvrir les bases de l'architecture des ordinateurs,
-c’est-à-dire comment dans un ordinateur les différents composants opèrent leurs
-calcul pour remplir des fonctions données.
+Cours de 15h initialement donné pour les 4èmes années mobilité et objets connecté de l'ESGI en 2019 et 2020.
 
-Par exemple comment le processeur, charge des données de la mémoire, les traite à l'aide d'instructions et les écrit dans ma mémoire.
+Dans ce cours, nous allons découvrir les bases de l'assembleur RiscV, il s'agit d'un jeu
+réduit il y a peu d'instructions comparé à Intel nous verrons que cela n'est pas un problème en soit.
+
+Par exemple comment le processeur, charge des données de la mémoire, les traite à l'aide d'instructions et les écrit dans la mémoire.
 
 > _Note :_ Nous verrons plus tard que nos ordinateurs modernes
 Exploitent le concept du programme «stocké» en mémoire. Le programme peut donc être
 vu comme une donnée en mémoire.
 
-Nous verrons en ouverture la mémoire virtuelle et les entrées, sorties avec les périphériques très succinctement.
+Nous verrons en ouverture la mémoire virtuelle, les entrées/sorties avec les périphériques très succinctement et
+le pipelining.
+
+## Préambule
+
+Afin de se préparer et de commencer avec un support sympa je vous recommande très fortement le [Crash Course Computer Science](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo) de [Carrie Anne Philbin](https://en.wikipedia.org/wiki/Carrie_Anne_Philbin) disponnible sur Youtube, les chapitres [1 The Mechanics of How Computers Work](https://www.youtube.com/watch?v=O5nskjZ_GoI&list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo&t=0s)
+et [3 Computer Hardware](https://www.youtube.com/watch?v=6-tKOHICqrI&list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo&t=0s)
+donnent une bonne introduction des concepts du cours.
+
+Je vous encourage à regarder le reste par curiosité.
+
+### Exercices -  Notes
+
+Dans ce cours il est indispensable de faire les exercices, je demanderais donc que vous forkiez ce dépot et réalisiez quotidiennement
+les exercices.
+
+Il y aura aussi un qcm et des devoirs maisons raisonnables.
+Concernant projet ou examen avec le confinnement je dois contacter la direction pédagogique pour décider.
 
 ## Contexte
 
-## Architecture RiscV
+## Assembleur c'est quoi
 
-Risc-V est une architecture d'ordinateur à jeu d'instruction _ISA Instruction Set Architecture_ dite [_Reduced Instruction Set Computer (RISC) _](https://fr.wikipedia.org/wiki/RISC-V),
-c’est-à-dire à un processeur avec un jeu d'instruction réduit et régulier.
+Nos ordinateurs ne mangent pas de JavaScript, ni de C, ni du Rust directement, ils executent de l'assembleur et soit
+vous compilez vers l'assembleur comme en Rust, C, C++ soit vous utilisez un compilateur Juste à Temps (JIT), soit vous interpretez
+un jeu d'instruction haut niveau. Mais au final votre processeur lui ne vois que du code machine.
 
-A titre d'exemple l'architecture externe des processeurs [Intel x86_64](https://en.wikipedia.org/wiki/X86-64) est de type
-[_Complex Instruction Set Computer (CISC)_](https://en.wikipedia.org/wiki/Complex_instruction_set_computer).
+L'assembleur, sous la forme de *code machine* est ce que nos processeurs executent, des séries de 0 et de 1
+organisé sous la forme d'un mot machine d'un nombre de bit définit. Dans notre cas pour le RiscV les mots
+seront de 32 bits, certains jeux d'Instructions tel [Intel x86_64](https://en.wikipedia.org/wiki/X86-64) 
+ont des jeux à taille de mot variable et beaucoup plus d'instructions.
 
-> Note: C'est en dehors du cadre du cours mais dans la réalisation *interne* du processeur x86_64 on s'arrange pour obtenir un jeu interne RISC car c'est plus facile à optimiser et maintenir.
+Nous manipuleront une forme textuelle de l'assembleur qui sera traduit en code machine par un
+programme dit [assembleur](https://fr.wikipedia.org/wiki/Programme_assembleur).
 
-<!-- Parler plus de RiscV en général ou faire une ouverture sur le Hennessy et Patterson -->
+Ces mots permettent de manipuler la mémoire, les registres qui sont l'unité de mémoire du processeur, dans ces mots
+les bits sont organisé pour avoir un sens, plusieurs formats existent pour pouvoir encoder différentes choses,
+comme de la manipulation de mémoire, une addition ou une comparaison ou un saut.
 
-### Vue d'ensemble
+### Mise en pratique
 
-Un assembleur ou *langage d'assemblage* est un langage permettant de
-directement utiliser les capacités de calcul d'un processeur.
-La représentation textuelle, doit être traitée par un programme nommé «[assembleur](https://fr.wikipedia.org/wiki/Programme_assembleur)» chargé de
-transformer notre assembleur en code **machine** binaire qui sera lui exécutable par notre processeur.
+Dans ce le cadre de ce cours nous allons utilisers le logiciel [Rars](https://github.com/TheThirdOne/rars) _RISC-V Assembler and Runtime Simulator_,
+afin de visualiser ce qui se passe. Malheureusement nous n'aurons pas de hardware RiscV ce sera plus l'année prochaine, mais il existe des cartes de
+developpement avec un processeur RiscV.
 
-Pour commencer directement avec du code voici un exemple de code C :
+Rars est un simulateur permetant d'executer du RiscV comme si il y avait un OS sout-jacent, l'interet de Rars est de pouvoir visualiser toutes les
+interactions avec la mémoire de façon visuelle. Nous utiliseront [la version 1.4](https://github.com/TheThirdOne/rars/releases/tag/v1.4) il vous faudra
+OpenJDK version égale ou supérieur à 8 ou Java de Oracle.
+
+#### Prise en main de Rars
+
+Voici un exemple concret et notre premier programme, ce premier programme additionne deux nombre et sauvegarde le résultat dans un
+registre.
+
+Ici on veux additionner 32 avec 10 et à la fin le résultat sera dans le registre `t0` voici deux façons naives de faire
+en C, Rust et RiscV.
+
+En Rust on aurait fait:
+
+```rust
+let mut a = 32;
+a += 10;
+```
+
+En C:
 
 ```c
 int a = 32;
 a += 10;
 ```
 
-Il pourrait compiler en :
+Et en RiscV
 
-```mips
-mon_code:
-#         / 32 est un immédiat
-li   t0, 32     # Ce programme charge 32 dans le registre t0
-#      \ t0 est un registre
-addi t0, t0, 10 # Puis additionne 10 à ce registre.
+```mips  
+mon-code:
+#        / 32 est un immédiat c'est à dire on encode 32 dans l'instruction.
+li   t0, 32
+#     \ t0 est un registre
+addi t0, t0, 10  # Puis additionne l'immédiat 10 à ce registre.
 ```
 
 Dans le programme ci-dessus on voit des éléments typiques d'un assembleur:
@@ -57,10 +99,33 @@ Dans le programme ci-dessus on voit des éléments typiques d'un assembleur:
 - Un **registre** : `t0`, manipule en lecture et écriture.
 - Un **labels** : `mon_code` qui permettent de nommer une adresse dans le programme ici il pointe sur notre `li`.
 
-Il existe d'autres instructions pour manipuler la mémoire et faire des branchements
-conditionnels que nous verrons plus tard.
+Dans Rars ça devrait donner ça [Interface d'edition de notre programme](00_rarsUI.png).
 
-#### Registres
+Instructions présentées au dessus.
+
+`li`: Pseudo instruction qui charge dans son registre de destination un immédiat sur 12 bit si signé ou 32 bits si  non signé
+`addi`: Additionne son registre de source à un immédiat sur 12 bits et assigne le résultat dans son registre de destination.
+
+Une fois que vous aurrez assemblé votre programme vous devriez voir ça:
+[Interface d'execution de notre programme](01_rarsUI_Assembly.png).
+
+*Question*: À la fin du programme quelle valeur contiens le registre `t0` ?
+
+## Architecture RiscV
+
+Dans ce cours nous allons utiliser le jeu d'instruction Risc-V, il s'agit d'une architecture d'ordinateur
+à jeu d'instruction _ISA Instruction Set Architecture_ dite [_Reduced Instruction Set Computer (RISC) _](https://fr.wikipedia.org/wiki/RISC-V),
+c’est-à-dire à un processeur avec un jeu d'instruction réduit et régulier avec peu de formats.
+
+A titre d'exemple l'architecture externe des processeurs  est de type
+[_Complex Instruction Set Computer (CISC)_](https://en.wikipedia.org/wiki/Complex_instruction_set_computer).
+
+> Note: Pour votre curiosité dans la réalisation *interne* d'un processeur x86_64
+les concepteurs s'arrangent pour obtenir un jeu interne RISC car c'est plus facile à optimiser et maintenir.
+
+<!-- Parler plus de RiscV en général ou faire une ouverture sur le Hennessy et Patterson -->
+
+### Registres
 
 En assembleur RiscV, on manipule explicitement des petites unités de mémoire
 disposées dans le processeur nommé des **registres**, il y en a 32 accessibles
@@ -103,7 +168,7 @@ et la fonction qui est appelée.
 <!-- Schema? -->
 Comme nous l'avons vu en RiscV on utilise des instructions pour manipuler les registres et la mémoire, les instructions sont représentées sous la forme de valeurs binaires sur par exemple 32 bit.
 
-Pour rappel le programme de tout à l'heure:
+Par exemple le programme suivant:
 
 ```mips
 li   t0, 32     # Ce programme charge 32 dans le registre t0
@@ -141,7 +206,7 @@ On verra dans la partie [Formatage binaire des instructions](#formatage-binaire-
 #### Mémoire
 
 Comme vu l'avez peut-être vu en C on représente la mémoire comme un espace, allant
-de l'adresse `0x0000_0000` jusque à l'adresse `0xFFFF_FFFF` pour un programme 32bits.
+de l'adresse `0x0000_0000` jusque à l'adresse `0xFFFF_FFFF` pour un programme 32 bits.
 
 ##### Segments
 
@@ -153,15 +218,18 @@ est le segment: `.text` pour les données du programme connues avant l'exécutio
 
 Par exemple la pile est un segment particulier, qu'on utilise pour stocker des variables locales et conserver la valeur des registres entre les appels de fonctions ou appel au système d'exploitation.
 
-##### Usage dans l'assembleur
+##### Adresses en l'assembleur
 
 <!-- todo Schemas -->
 
-Dans nos programmes assembleurs on manipulera des adresses souvent. Les labels nous servirons à marquer une adresse particulière pour sauter dessus ou pour
-charger un tableau du segment `.data`. Ou alors on utilisera le registre, `sp`
-qui marque le sommet de la pile pour sauvegarder la valeur de nos registres.
+Dans nos programmes assembleurs on manipulera des adresses souvent.
+Les labels nous servirons à marquer une adresse particulière pour sauter dessus ou pour
+charger une valeur dans le segment `.data`. 
+
+Ou alors on utilisera le registre, `sp` qui marque le sommet de la pile pour sauvegarder la valeur de nos registres.
 Le registre `gp` ou `ra` sont utilisés calculer des jumps relatifs dans le
-programme. Attention le registre `pc` est pas accessible directement à nos programmes.
+programme.
+Il existe aussi le programme counter qui contiens l'addresse de l'instruction courante.
 
 <!-- ##### Mémoire virtuelle -->
 
@@ -189,6 +257,7 @@ Elle se décompose en l'instruction `aiupc` et souvent un `add`, l'idée est de 
 de code `pc`, c'est pour des questions de praticité dans la réalisation du hardware et des compilateurs.
 
 Exemple:
+
 ```mips
 la t0, my_address # t0 contiendra l'adresse pointé par my_address
 ```
@@ -202,14 +271,14 @@ Cette instruction charge dans un registre de destination le contenu dans la mém
 
 Équivalent en C:
 ```c
-int a[2] = { 42, 1 }; // On réserve un array de 1 mot de 32bits.
+int a[2] = { 42, 1 }; // On réserve un array de 2 mot de 32bits.
 int b = a[0];         // On récupère 42
 int c = c[1];         // On récupère 1
 ```
 
 ```asm
 .data
-myInt: .word 42 # On réserve un mot de 32 bits pour stocker un entier.
+myInt: .word 42, # On réserve un mot de 32 bits pour stocker un entier.
 
 .text
 la t0, myInt # On charge dans t0 l'adresse de myInt.
@@ -284,6 +353,63 @@ Cette instruction permet d'écrire un byte 8bits dans la mémoire c'est utile po
 la mémoire est adressable de 1 en 1.
 
 #### Instruction de Branchements
+
+Pour pouvoir écrire des programmes en fonctions de résultats de vos calculs, il faut pouvoir
+«choisir» quel code executer selon un résultat, il s'agit des instructions de branchement.
+Dans nos langages hauts niveaux ont fait ça avec des boucles, `for`, `loop`, `if`, `else`, des appels de fonctions
+voir des exceptions.
+
+Cas particulier: le `match` de Rust ou swift ou le `switch-case` en C, Javascript etc. Est un peu différent en terme de comment
+on le compile par rapport à un `if`.
+
+Pour réaliser cela nous avons à notre disposition des instructions de branchement conditionnelles et non conditionnelles,
+l'idée générale est de sauter en fonction d'un test sur plusieurs registres à une adresse via son label ou à un registre.
+
+#### Branchements non conditionnels (Jumps)
+
+Pour faire des sauts inconditionnel il existe la pseudo instruction:
+
+> j label
+
+```mips
+li t0, 42
+j my_exit # On saute à my_exit directement
+
+# Ici cette instruction ne sera jamais executé :(
+add t0, t0, 1
+
+my_exit:
+# t0 vaut donc 42 ici.
+```
+
+`jal` jump and link, instruction qui sauvegarde l'addresse ou on était
+et saute au label, très utile pour lorsque nous feront des fonctions.
+
+> jal reg_save_addr, label
+
+Not: En réalité `j` est réalisé par un `jal x0 label` on sauvegarde pas l'addresse courante avant le saut
+et on saute! ;)
+
+#### Branchements conditionnels
+
+| Format | Signification
+|:-------|:----:|
+| beq    | Branch if equal    |
+| bge    | Branch if greater than or equal |
+| bgeu   | Branch if greater than or equal (unsigned)    |
+| blt    | Branch if less than |
+| bltu   | Branch if less than (unsigned) |
+| bne    | Branch not equal |
+
+Ici le format est très régulier entre toutes ces instructions vous aurrez toujours:
+
+> branch_instruction op1 op2 label
+
+Ça permet de réaliser les branchements utiles pour faire des programmes.
+
+#### Affectation conditionnelles
+
+Comming Soon
 
 #### Appel systèmes
 
@@ -435,9 +561,10 @@ On retrouve bien la convention d'appel qui sauvegarde tout les registres.
 
 On vois ici que les registres sauvegardé sont:
 -->
-
+<!--
 ## Exercices
 
+(refactoring à venir)
 Sujets:
 
 - Rechercher un entier passé en paramètre dans un tableau de entier.
@@ -455,13 +582,13 @@ Sujets:
 - Swapp 2 à 2 des élèments d'un tableau
     objectif : découverte des écriture mémoires [1,2,3,4] deviendrais [2,1,4,3]
 
-<!-- - Ecrire un compresseur [RLE](https://fr.wikipedia.org/wiki/RLE)
+< !-- - Ecrire un compresseur [RLE](https://fr.wikipedia.org/wiki/RLE)
     objectif : accès mémoire, registre
-    -->
+    -- >
 
 - Faire un chiffrement simple par décalage
     objectif : utilisation des décalage de bits
-
+-->
 
 ### Références:
 
