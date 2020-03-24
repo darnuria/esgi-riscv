@@ -11,6 +11,8 @@
 # Assigner des nombres dans des registres:
 # - `t0` <- 5
 # - `t1` <- 4
+#
+# Corriger les lignes avec des `???`.
 .data
 
 msg_eq: .asciz "Ces nombres sont egaux!"
@@ -55,4 +57,4 @@ end:
 # le numéro du syscall printString: 4 et a7 la chaine à afficher.
 
 li ???, 4 # numéro syscall
-???
+???       # Quelle instruction doit-on utiliser pour faire un syscall?
