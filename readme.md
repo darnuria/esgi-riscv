@@ -99,7 +99,7 @@ Dans le programme ci-dessus on voit des éléments typiques d'un assembleur:
 - Un **registre** : `t0`, manipule en lecture et écriture.
 - Un **labels** : `mon_code` qui permettent de nommer une adresse dans le programme ici il pointe sur notre `li`.
 
-Dans Rars ça devrait donner ça [Interface d'edition de notre programme](00_rarsUI.png).
+Dans Rars ça devrait donner ça: ![Interface d'edition de notre programme](00_rarsUI.png).
 
 Instructions présentées au dessus.
 
@@ -107,7 +107,7 @@ Instructions présentées au dessus.
 `addi`: Additionne son registre de source à un immédiat sur 12 bits et assigne le résultat dans son registre de destination.
 
 Une fois que vous aurrez assemblé votre programme vous devriez voir ça:
-[Interface d'execution de notre programme](01_rarsUI_Assembly.png).
+![Interface d'execution de notre programme](01_rarsUI_Assembly.png).
 
 *Question*: À la fin du programme quelle valeur contiens le registre `t0` ?
 
@@ -209,7 +209,7 @@ Comme vu l'avez peut-être vu en C on représente la mémoire comme un espace, a
 de l'adresse `0x0000_0000` jusque à l'adresse `0xFFFF_FFFF` pour un programme 32 bits.
 
 Voici d'ailleurs une vue d'ensemble mémoire et code d'un programme assembleur:
-[schema vue ensemble mémoire et code et segments](03_asm_memory.jpg).
+![schema vue ensemble mémoire et code et segments](03_asm_memory.jpg).
 
 ##### Segments
 
