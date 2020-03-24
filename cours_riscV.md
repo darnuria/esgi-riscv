@@ -203,10 +203,13 @@ Par exemple  `mv t1, t0` est décomposé en un `add t1, zero, t0`.
 
 On verra dans la partie [Formatage binaire des instructions](#formatage-binaire-des-instructions) pourquoi `mv` et `li` ne sont pas réalisés par notre jeu d'instruction.
 
-#### Mémoire
+### Mémoire
 
 Comme vu l'avez peut-être vu en C on représente la mémoire comme un espace, allant
 de l'adresse `0x0000_0000` jusque à l'adresse `0xFFFF_FFFF` pour un programme 32 bits.
+
+Voici d'ailleurs une vue d'ensemble mémoire et code d'un programme assembleur:
+[schema vue ensemble mémoire et code et segments](03_asm_memory.jpg).
 
 ##### Segments
 
@@ -234,6 +237,8 @@ Il existe aussi le programme counter qui contiens l'addresse de l'instruction co
 <!-- ##### Mémoire virtuelle -->
 
 #### Instruction arithmétique et logique
+
+Comming soon.
 
 #### Instructions Mémoire
 
