@@ -599,3 +599,4 @@ Sujets:
 
 - Cours MIT archi https://www.youtube.com/channel/UC1DcxXg6GkAcp2zk2w7U6qQ/videos
 - https://riscv.org/specifications/
+- https://inst.eecs.berkeley.edu/~cs61c/fa17/lec/05/L05%20RISCV%20Intro%20(1up).pdf
