@@ -18,4 +18,4 @@ la a0, ??? # argument de l'appel systeme
 li a7, ??? # appel systeme 4 selon la doc de Rars printString
 ecall # Peret de basculer en mode kernel pour faire l'appel systeme.
 
-# Bonus: avoir 64 dans un registre en une seule instruction
+# Bonus: Afficher maintenant un nombre, vous aurrez besoin de la documentation.
