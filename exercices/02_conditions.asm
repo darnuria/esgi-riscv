@@ -1,6 +1,8 @@
-# Exercice 2 conditions
+# Exercice 2
 # Notions:
 #
+# Pouvoir faire un saut conditionnel dans un programme ici
+# tester l'egalité entre deux registres.
 # Effectuer un branchement conditionnel puis non conditionnel.
 # Puis afficher un message selon le résultat.
 
@@ -27,23 +29,30 @@ msg_neq: .asciz "Ces nombres ne sont pas egaux"
 ### Ici à vous de jouer utiliser
 # deux instructions à écrire pour charger 5 dans t0 et t1 dans 4.
 
+# début du programme.
+main:
+li t0, 4
+li t1, 5
+
+# "bne" Branch if Not Equals: Saute si nos registres ne sont pas égaux.
 bne t0, t1, not_eq # if t0 != t1 jump not_eq
 
-# Cas égaux
-la a7 # msg <- "Ces nombres sont egaux!" 
+# Cas égaux t0 == t1
+la ???, ??? # msg <- "Ces nombres sont egaux!"
 j end # On a fini donc on peut sortir du if.
 
-# Cas Inégaux
+# Cas Inégaux t0 != t1
 not_eq:
-la a7 ??? # msg <- "Ces nombres ne sont pas egaux"
+la ???, ??? # msg <- "Ces nombres ne sont pas egaux"
 ###
 
 end:
-# Affichage
+
+# Affichage:
 #
 # Ici on souhaite afficher sur la console via un appel système.
 # inspirez vous de l'exercice 01_syscall, le registre a0 doit contenir
 # le numéro du syscall printString: 4 et a7 la chaine à afficher.
 
-li ?? ???
-ecall
+li ???, 4 # numéro syscall
+???
