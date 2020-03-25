@@ -13,8 +13,8 @@
 # On déclare «naivement» un tableau et sa taille, dans le segment data.
 # On vera dans la suite du cours que c'est pas exactement comme ça qu'on fait,
 # dans la vrai vie des choses de font dans la pile.
-size_array: .word 6
-array: .word 124, 256, 512, 2, 8, 4
+size_array_g: .word 6
+array_g: .word 124, 256, 512, 2, 8, 4
 
 .text
 
