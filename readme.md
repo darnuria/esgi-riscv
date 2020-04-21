@@ -458,6 +458,48 @@ Ici le format est très régulier entre toutes ces instructions vous aurrez touj
 
 Ça permet de réaliser les branchements utiles pour faire des programmes.
 
+#### Boucles
+
+Pour faire une boucle il est necessaire de définir un label pour le début et parfois un label
+pour la fin de la boucle.
+
+Trois étapes sont cruciales:
+
+- (parfois optionnelle) initialiser un itérateur ou compteur
+- Tester si la condition de validité de la boucle parfois il faudra inverser la condition que vous ecriveriez en pseudo code
+- Incrémenter
+
+Par exemple: un compteur qui compte jusque a 128:
+
+```mips
+li a0, 0 # i = 0
+li t0, 128 # end = 128
+
+while:
+  beq a0, t0, end_while
+  addi a0, a0, 1
+  j while
+end_while:
+```
+
+Une autre façon de faire aurait été d'inverser la condition d'arret:
+```
+li a0, 0 # i = 0
+li t0, 128 # end = 128
+
+while:
+  addi a0, a0, 1
+  bne a0, t0, while
+end_while:
+```
+
+**Note:** Dans vos programmes en général c'est le compilateur qui optimise ce genre de choses.
+Mais peut-être un jour ça vous servira de savoir identifier pourquoi un programme est lent et
+de comprendre l'assembleur emi.
+
+Il existe de très nombreuses façons d'optimiser dans les compilateurs les boucles, c'est important
+car nos programme passent la plupart de leur execution dans des boucles.
+
 #### Affectation conditionnelles
 
 Comming Soon
