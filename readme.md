@@ -282,8 +282,8 @@ Exemple un tableau `[124, 256, 512]` contenant les mots de 32bits dans le segmen
 Voir instruction `lw` plus bas.
 
 | Addresse | 0x1001_0000 | 0x1001_0004 | 0x1001_0008 |
-|:---------|:-----:|:-----:|:-------:|
-| Contenu  |  124  |  256  |  512  |
+|:---------|:-----------:|:-----------:|:-----------:|
+| Contenu  |         124 |         256 |        512  |
 
 En revanche maintenant si je travaille avec des données sur 8 bits comme des caractères j'addresserais de
 1 en 1!
@@ -292,8 +292,8 @@ Voir instruction `lb` plus bas
 Voici la chaine "Chat" et son zéro de fin.
 
 | Addresse | 0x1001_0000 | 0x1001_0001 | 0x1001_0002 | 0x1001_0003 | 0x1001_0004 |
-|:---------|:-----:|:-----:|:-------:|
-| Contenu  |  C  |  h  |  a  | t | \0 |
+|:---------|:-----------:|:-----------:|:-----------:|:-----------:|:-----------:|
+| Contenu  |           C |           h |           a |           t |          \0 |
 
 Si je travaille avec des mots sur 16 bits, la en revanche j'addresse de 2 en 2 mais c'est rare,
 Note: voir `lh`.
