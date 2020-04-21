@@ -8,9 +8,9 @@ Les exercices sont rangé par difficulté croissante.
 
 ## Rendu
 
-**Date:** 3 mai 2020 00:00
-**Où:** Déposer une archive au format `.zip` de vos dépots git sur myges suivre les instructions plus bas.
-**Taille des groupes maximum:** 2 personnes
+- **Date:** 3 mai 2020 00:00
+- **Où:** Déposer une archive au format `.zip` de vos dépots git sur myges suivre les instructions plus bas.
+- **Taille des groupes maximum:** 2 personnes
 
 ### Forme du rendu
 
