@@ -1,5 +1,7 @@
 # Introduction à l'assembleur RiscV
 
+Liens vers le dépot git: <https://github.com/darnuria/esgi-riscv>
+
 Cours de 15h initialement donné pour les 4èmes années mobilité et objets connecté de l'ESGI en 2019 et 2020.
 
 Dans ce cours, nous allons découvrir les bases de l'assembleur RiscV, il s'agit d'un jeu
@@ -216,7 +218,7 @@ il est fait byte à byte. voir instruction `lw`, `lh`, `lb` et `sw`, `sh`, `sb`.
 Voici d'ailleurs une vue d'ensemble mémoire et code d'un programme assembleur:
 ![schema vue ensemble mémoire et code et segments](03_asm_memory.jpg).
 
-##### Segments
+#### Segments
 
 Dans nos programmes on décompose cet espace en segments par exemple pour le code
 est le segment: `.text` pour les données du programme connues avant l'exécution c'est le segment `.data`.
@@ -253,6 +255,11 @@ Le registre `gp` ou `ra` sont utilisés calculer des jumps relatifs dans le
 programme.
 Il existe aussi le programme counter qui contiens l'addresse de l'instruction courante.
 
+
+| Addresse | 0x1001_0000 | 0x1001_0004 | 0x1001_0008 |
+|:---------|:-----:|:-----:|:-------:|
+| Contenu  |  124  |  256  |  512  |
+
 <!-- ##### Mémoire virtuelle -->
 
 #### Instruction arithmétique et logique
@@ -270,6 +277,26 @@ ordinateur. C'est le but des instructions de stockage (store) et de chargement
 
 >_Note :_ En riscV la mémoire est toujours alignée sur un multiple de 4 et on ne
 > peut pas accéder sur autre chose que un multiple de 4.
+
+Exemple un tableau `[124, 256, 512]` contenant les mots de 32bits dans le segment de données `.data`,
+Voir instruction `lw` plus bas.
+
+| Addresse | 0x1001_0000 | 0x1001_0004 | 0x1001_0008 |
+|:---------|:-----:|:-----:|:-------:|
+| Contenu  |  124  |  256  |  512  |
+
+En revanche maintenant si je travaille avec des données sur 8 bits comme des caractères j'addresserais de
+1 en 1!
+Voir instruction `lb` plus bas
+
+Voici la chaine "Chat" et son zéro de fin.
+
+| Addresse | 0x1001_0000 | 0x1001_0001 | 0x1001_0002 | 0x1001_0003 | 0x1001_0004 |
+|:---------|:-----:|:-----:|:-------:|
+| Contenu  |  C  |  h  |  a  | t | \0 |
+
+Si je travaille avec des mots sur 16 bits, la en revanche j'addresse de 2 en 2 mais c'est rare,
+Note: voir `lh`.
 
 ##### Charger une adresse dans un registre
 
